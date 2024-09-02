@@ -1,8 +1,8 @@
-import { Database } from 'bun:sqlite';
 import { clients, Client } from '../data/clients';
+import { Db } from './utils';
 
 export const seedClients = () => {
-  const db = new Database('db.sqlite');
+  const db = Db();
   db.run(`CREATE TABLE IF NOT EXISTS clients(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     client_id text,
@@ -16,15 +16,20 @@ export const seedClients = () => {
   }
 }
 
+export const getClients = () => {
+  const db = Db();
+  return db.query(`SELECT * FROM clients`).all() as Client[];
+}
+
 export const getClientById = (id: number) => {
-  const db = new Database('db.sqlite');
+  const db = Db();
   const client = db.query(`SELECT * FROM clients WHERE id = ?`).get(id);
   if (!client) return null;
   return client as Client;
 }
 
 export const getClientByClientId = (client_id: string) => {
-  const db = new Database('db.sqlite');
+  const db = Db();
   const client = db.query(`SELECT * FROM clients WHERE client_id = ?`).get(client_id);
   if (!client) return null;
   return client as Client;

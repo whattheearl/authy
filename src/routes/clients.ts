@@ -1,8 +1,21 @@
-import { Elysia } from 'elysia';
-import { Database } from 'bun:sqlite';
+import { Elysia, t } from 'elysia';
+import { getClientByClientId, getClientById, getClients } from '../db/clients';
 
-export const client = new Elysia()
+export const clientRoute = new Elysia({ prefix: '/clients' })
   .get('/', () => {
-    const db = new Database('/db.sqlite');
-
+    console.log();
+    const clients = getClients();
+    return { clients };
+  })
+  .get('/id/:id', ({ params: { id } }) => {
+    const client = getClientById(id);
+    return { client };
+  }, {
+    params: t.Object({ id: t.Number() })
+  })
+  .get('/name/:name', ({ params: { clientId } }) => {
+    const client = getClientByClientId(clientId);
+    return { client };
+  }, {
+    params: t.Object({ clientId: t.String() })
   })
