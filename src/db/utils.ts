@@ -1,5 +1,5 @@
+import { env } from 'bun';
 import { Database } from 'bun:sqlite';
-// TODO: use env var
-const DEFAULT_PATH = 'db.sqlite';
+const DEFAULT_PATH = env.DB_PATH ?? 'db.sqlite';
 
-export const Db = (path: string = DEFAULT_PATH) => new Database(path);
+export const getDb = (path: string = DEFAULT_PATH) => new Database(path);

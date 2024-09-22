@@ -1,8 +1,8 @@
 import { App, apps } from '../data/apps';
-import { Db } from './utils';
+import { getDb } from './utils';
 
-export const seedApps = () => {
-  const db = Db();
+export function seedApps(apps: App[]) {
+  const db = getDb();
   db.exec('DROP TABLE apps');
   db.exec(`CREATE TABLE IF NOT EXISTS apps (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -13,23 +13,24 @@ export const seedApps = () => {
 
   for (let i = 0; i < apps.length; i++) {
     const app = apps[i];
+    const { id, name, description, repo } = app;
     db.run('INSERT OR REPLACE INTO apps (id, name, desc, repo) VALUES (?,?,?,?)',
-      [app.id, app.name, app.desc, app.repo])
+      [id, name, description, repo])
   }
 }
 
-export const getApps = () => {
-  const db = Db()
+export function getApps() {
+  const db = getDb();
   const apps = db.query('SELECT * FROM apps').all();
   return apps as App[];
 }
 
-export const getAppById = (id: number) => {
-  const db = Db();
+export function getAppById(id: number) {
+  const db = getDb();
   return db.query(`SELECT * FROM apps WHERE id = ?`).get(id);
 }
 
-export const getAppByName = (name: string) => {
-  const db = Db();
+export function getAppByName(name: string) {
+  const db = getDb();
   return db.query(`SELECT * FROM apps WHERE name = ?`).get(name);
 }
