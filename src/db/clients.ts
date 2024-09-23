@@ -43,7 +43,7 @@ export function getClientById(id: number) {
 }
 
 export function getClientByName(name: string) {
-  const db = db();
+  const db = getDb();
   const client = db.query('SELECT * FROM clients WHERE name = ?').get(name);
   if (!client) return null;
   return client as Client;

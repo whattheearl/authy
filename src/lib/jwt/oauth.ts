@@ -7,11 +7,11 @@ const crypto = globalThis.crypto;
 export async function getJwks(jwks_uri: string) {
   const certs = await fetch(jwks_uri);
   const jwks = await certs.json();
-  console.debug('fetching jwks - jwks_uri:', jwks_uri, ' jwks:', jwks);
+  console.debug('jwks_uri:', jwks_uri, ' jwks:', jwks);
   return jwks as JWKS;
 };
 
-export async function verifyJwt(jwks: JWKS, token: string, options: VerifyOptions) {
+export async function verifyOauthJwt(jwks: JWKS, token: string, options: VerifyOptions) {
   if (!token) throw new Error('token required');
   console.debug('validating token');
 
@@ -63,31 +63,4 @@ export async function verifyJwt(jwks: JWKS, token: string, options: VerifyOption
   return payload as IClaims;
 };
 
-export class SignJwt {
-  header = { alg: 'HS256', 'typ': 'JWT' };
-  body = {};
 
-  constructor(body: Object) {
-    this.body = body;
-    return this;
-  }
-
-  setIssuedAt() {
-    this.body = { iat: Date.now() };
-    return this;
-  }
-
-  setExpirationTime(exp: number) {
-    this.body = { ...this.body, exp };
-    return this;
-  }
-
-  async sign(key: CryptoKey) {
-    // is this correct?
-    const encHeader = Buffer.from(JSON.stringify(this.header)).toString('base64url');
-    const encBody = Buffer.from(JSON.stringify(this.body)).toString('base64url');
-    const signature = await signMessage(`${encHeader}.${encBody}`, key);
-    const encSignature = Buffer.from(signature).toString('base64url');
-    return `${encHeader}.${encBody}.${encSignature}`;
-  }
-}

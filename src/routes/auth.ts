@@ -1,19 +1,21 @@
 import { Elysia, redirect, t } from "elysia";
 import { randomBytes } from "../lib/crypto";
 import { OidcCookie, generateAuthorizationUrl, generateTokenUrl, getDiscoveryDocument, getTokensAsync, hashCodeChallenge } from "../lib/oauth";
-import { getJwks, verifyJwt } from "../lib/jwt";
+import { getJwks, verifyOauthJwt, SignHMAC, generateHMACKey, exportHMAC, importHMAC, verifyHMAC } from "../lib/jwt";
 import { getClientByName } from "../db/clients";
+import { tempKey } from "./key";
 
 export const authRoute = new Elysia({ prefix: 'auth' })
-  .post("/signin", async () => {
-    return redirect('/auth/google/signin');
-  })
-  .get("/:name/signin", async ({ params: { name }, cookie: { oidcCookie }, query: { redirectTo }) => {
+  .post('/signin', ({ body: { clientName,  } }) => { return { clientName } },
+    { body: t.Object({ clientName: t.String(), })}
+  )
+  .get("/:name/signin", async ({ params: { name }, cookie: { oidcCookie }, query: { redirectTo } }) => {
+    console.debug('client.name: ', { name })
     if (!name)
       return new Response("not found", { status: 404 });
-    console.debug({ name })
+
     const client = getClientByName(name);
-    console.debug({ client });
+    console.debug('client: ',{ client });
     if (!client)
       return new Response("not found", { status: 404 });
 
@@ -23,13 +25,13 @@ export const authRoute = new Elysia({ prefix: 'auth' })
     const state = randomBytes(32);
     const code_verifier = randomBytes(64);
     const nonce = randomBytes(64);
-    const value = { state, code_verifier, nonce, redirectTo } as OidcCookie;
+    const value = { state, code_verifier, nonce, redirectTo: redirectTo } as OidcCookie;
     oidcCookie.value = JSON.stringify(value);
     oidcCookie.httpOnly = true;
-    console.debug(oidcCookie.value);
+    console.debug('oidcCookie: ', oidcCookie.value);
 
     const code_challenge = await hashCodeChallenge(code_verifier);
-    console.debug({ code_challenge });
+    console.debug('code_challange: ', { code_challenge });
     const url = generateAuthorizationUrl(
       discoveryDocument.authorization_endpoint,
       client.client_id as string,
@@ -38,17 +40,17 @@ export const authRoute = new Elysia({ prefix: 'auth' })
       nonce,
       state
     );
-    console.debug(url.toString());
+    console.debug('redirectUrl: ', url.toString());
     return redirect(url.toString());
   }, {
     params: t.Object({ name: t.String() }),
-    query: t.Object({ redirectTo: t.String() })
+    query: t.Object({ redirectTo: t.Optional(t.String()) })
   })
-  .get("/:name/callback", async ({ params: { name }, query: { code, state }, cookie: { oidcCookie } }) => {
+  .get("/:name/callback", async ({ params: { name }, query: { code, state }, cookie: { oidcCookie, sid } }) => {
     if (!name) return new Response("not found", { status: 404 });
-    console.debug({ name });
+    console.debug('client.name: ', { name });
     const client = getClientByName(name);
-    console.debug({ client });
+    console.debug('client: ', { client });
     if (!client)
       return new Response("not found", { status: 404 });
 
@@ -69,19 +71,42 @@ export const authRoute = new Elysia({ prefix: 'auth' })
     );
 
     const tokens = await getTokensAsync(token_url);
-    console.debug({ tokens });
+    console.debug('tokens: ', { tokens });
     const jwks = await getJwks(discoveryDocument.jwks_uri);
-    console.debug({ jwks });
-    const claims = await verifyJwt(jwks, tokens.id_token, {
+    console.debug('jwks: ',{ jwks });
+    const claims = await verifyOauthJwt(jwks, tokens.id_token, {
       issuer,
       audience,
     });
-    console.debug({ claims });
+    console.debug('claims: ', { claims });
     if (claims.nonce != oidc.nonce) throw new Error('invalid nonce');
     const redirectTo = oidc.redirectTo ?? '/';
-    console.debug(`redirecting user to ${redirectTo}`);
-    return redirect(oidc.redirectTo ?? '/');
+    console.debug('redirectTo: ', { redirectTo });
+    const user = { id: 1, email: claims.email, name: `${claims.given_name} ${claims.family_name}`};
+    
+    const key = await importHMAC(tempKey);
+    const jwt = await new SignHMAC(user)
+      .setIssuedAt()
+      .sign(key);
 
+    console.debug('jwt:', jwt);
+    sid.value = jwt;
+
+    return redirect(oidc.redirectTo ?? '/auth/claims');
+  })
+  .get('/claims', async ({ cookie: { sid } }) => {
+    console.log('sid:', sid.value);
+    const key = await importHMAC(tempKey);
+    console.debug('key:', key);
+    const verify = await verifyHMAC(sid.value, key);
+    console.debug('verify:', verify)
+    if(!verify)
+      return 'invalid sid';
+    
+    const body = sid.value!.split('.')[1];
+    return Buffer.from(body, 'base64url').toString('utf8');
+  },{
+    cookie: t.Object({ sid: t.String() })
   })
   .post("/signout", () => { throw new Error("not implemented") });
 

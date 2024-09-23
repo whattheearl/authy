@@ -5,9 +5,9 @@ import { clientRoute } from "./routes/clients";
 import { authRoute } from "./routes/auth";
 import { appsRoute } from "./routes/apps";
 import { clients } from './data/clients';
-import { SeedClients } from "./db/clients";
+import { seedClients } from "./db/clients";
 
-SeedClients(clients);
+seedClients(clients);
 
 const app = new Elysia()
   .use(swagger())
