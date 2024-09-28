@@ -1,5 +1,5 @@
 import Elysia, { t } from "elysia";
-import { getAppById, getAppByName, getApps } from "../db/apps";
+import { getAppById, getAppByName, getApps } from "../lib/apps";
 
 export const appsRoute = new Elysia({ prefix: '/apps' })
   .get('/', () => getApps())
