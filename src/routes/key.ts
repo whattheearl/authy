@@ -1,3 +1,4 @@
+// WARNING: dont use in prod
 export const tempKey = {
   alg: "HS256",
   ext: true,
