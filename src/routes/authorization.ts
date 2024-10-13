@@ -28,13 +28,11 @@ export const authorization = new Elysia().get(
                 { status: 400 },
             );
         }
-        
         const key = getKey();
+        // has builtin signed cookies
         const jwt = oauth.value ?? '';
         const verify = await verifyHMAC(jwt, key);
         if (!verify) {
-            // TODO: make secure
-            oauth.httpOnly = true;
             oauth.value = await new SignHMAC({
                 client_id,
                 scope,
@@ -55,8 +53,12 @@ export const authorization = new Elysia().get(
         return { client_id, scope, state };
     },
     {
-        cookie: t.Object({
+        cookie: t.Cookie({
             oauth: t.Optional(t.String()),
+        },{ 
+            secure: Bun.env.NODE_ENV == 'PRODUCTION',
+            httpOnly: true,
+            secrets: 'dev-secret',
         }),
         query: t.Object({
             client_id: t.String(),
