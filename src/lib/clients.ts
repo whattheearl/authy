@@ -4,7 +4,6 @@ import { env } from 'bun';
 export interface Client {
     id: number;
     name: string;
-    authority: string;
     client_id: string;
     client_secret: string;
     redirect_uri: string;
@@ -14,18 +13,9 @@ export const clients = [
     {
         id: 1,
         name: 'test',
-        authority: 'https://wte.sh',
-        client_id: 'first0',
-        client_secret: 'first_secret',
+        client_id: 'test',
+        client_secret: 'test-secret',
         redirect_uri: 'http://localhost:5173/auth/google/callback',
-    },
-    {
-        id: 2,
-        name: 'google',
-        authority: env.OIDC_GOOGLE_AUTHORITY as string,
-        client_id: env.OIDC_GOOGLE_CLIENTID as string,
-        client_secret: env.OIDC_GOOGLE_CLIENTSECRET as string,
-        redirect_uri: env.OIDC_GOOGLE_REDIRECTURL as string,
     },
 ] as Client[];
 
@@ -42,7 +32,6 @@ export function createTable() {
     db.run(`CREATE TABLE IF NOT EXISTS clients(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name  VARCHAR(30),
-    authority text, 
     client_id text,
     client_secret text,
     redirect_uri text
@@ -56,11 +45,11 @@ export function dropTable() {
 
 export function addClient(client: Client) {
     const db = getDb();
-    const { id, name, authority, client_id, client_secret, redirect_uri } =
+    const { id, name, client_id, client_secret, redirect_uri } =
         client;
     db.run(
-        `INSERT OR REPLACE INTO clients (id, name, authority, client_id, client_secret, redirect_uri) VALUES (?,?,?,?,?,?)`,
-        [id, name, authority, client_id, client_secret, redirect_uri],
+        `INSERT OR REPLACE INTO clients (id, name, client_id, client_secret, redirect_uri) VALUES (?,?,?,?,?,?)`,
+        [id, name, client_id, client_secret, redirect_uri],
     );
 }
 
