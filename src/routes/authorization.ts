@@ -1,12 +1,12 @@
 import Elysia, { t } from 'elysia';
 import { getClientByClientId } from '../lib/clients';
-import { getKey } from '../lib/keys';
-import { SignHMAC, verifyHMAC } from '../lib/oidc';
+import { randomBytes } from '../lib/oidc';
+import { addCodeChallenge } from '../lib/code-verifier';
 
 export const authorization = new Elysia().get(
     '/authorization',
     async ({
-        cookie: { oauth },
+        cookie: { oauth, sess },
         query: {
             client_id,
             scope,
@@ -19,21 +19,27 @@ export const authorization = new Elysia().get(
     }) => {
         const client = getClientByClientId(client_id);
         if (!client) {
+            console.error('no client');
             return new Response('Client not found.', { status: 404 });
         }
 
         if (redirect_uri != client.redirect_uri) {
+            console.error('miss mathch redirect');
             return new Response(
                 `invalid redirect_uri:${redirect_uri} expected:${client.redirect_uri}`,
                 { status: 400 },
             );
         }
-        const key = getKey();
-        // has builtin signed cookies
-        const jwt = oauth.value ?? '';
-        const verify = await verifyHMAC(jwt, key);
-        if (!verify) {
-            oauth.value = await new SignHMAC({
+
+        // TODO: validate scope
+
+        console.log('session.value', sess.value);
+        const sessionValue = !sess.value ? '{}' : sess.value;
+        const session = JSON.parse(sessionValue);
+        console.log('session', session);
+        console.debug({ session });
+        if (!session.username) {
+            oauth.value = JSON.stringify({
                 client_id,
                 scope,
                 response_type,
@@ -41,25 +47,38 @@ export const authorization = new Elysia().get(
                 nonce,
                 state,
                 redirect_uri,
-            })
-                .setIssuedAt()
-                .sign(key);
+            });
             return new Response('redirecting', {
                 status: 302,
-                headers: { location: `/signin` },
+                headers: { location: `/` },
             });
         }
-
-        return { client_id, scope, state };
+        console.log('constructing redirect_uri');
+        const url = new URL(redirect_uri);
+        const key = addCodeChallenge({
+            key: randomBytes(32),
+            code_challenge,
+            nonce,
+        });
+        url.searchParams.set('code', key);
+        url.searchParams.set('state', state);
+        return new Response('redirect', {
+            status: 302,
+            headers: { location: url.toString() },
+        });
     },
     {
-        cookie: t.Cookie({
-            oauth: t.Optional(t.String()),
-        },{ 
-            secure: Bun.env.NODE_ENV == 'PRODUCTION',
-            httpOnly: true,
-            secrets: 'dev-secret',
-        }),
+        cookie: t.Cookie(
+            {
+                sess: t.Optional(t.String()),
+                oauth: t.Optional(t.String()),
+            },
+            {
+                secure: Bun.env.NODE_ENV == 'PRODUCTION',
+                httpOnly: true,
+                secrets: 'dev-secret',
+            },
+        ),
         query: t.Object({
             client_id: t.String(),
             scope: t.String(),
