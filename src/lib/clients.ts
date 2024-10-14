@@ -1,5 +1,4 @@
 import { getDb } from './utils';
-import { env } from 'bun';
 
 export interface Client {
     id: number;
@@ -45,8 +44,7 @@ export function dropTable() {
 
 export function addClient(client: Client) {
     const db = getDb();
-    const { id, name, client_id, client_secret, redirect_uri } =
-        client;
+    const { id, name, client_id, client_secret, redirect_uri } = client;
     db.run(
         `INSERT OR REPLACE INTO clients (id, name, client_id, client_secret, redirect_uri) VALUES (?,?,?,?,?,?)`,
         [id, name, client_id, client_secret, redirect_uri],

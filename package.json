@@ -10,7 +10,8 @@
         "@elysiajs/html": "^1.1.1",
         "@elysiajs/static": "^1.1.1",
         "@elysiajs/swagger": "^1.1.1",
-        "elysia": "latest"
+        "elysia": "latest",
+        "jose": "^5.9.4"
     },
     "devDependencies": {
         "bun-types": "latest",
