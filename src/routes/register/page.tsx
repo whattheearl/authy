@@ -1,9 +1,9 @@
-import { Html } from "@elysiajs/html"
+import { Html } from '@elysiajs/html';
 // @ts-ignore
 import styles from './styles.css' with { type: 'text' };
 
-export default function() {
-    return(
+export default function () {
+    return (
         <html>
             <body>
                 <form method="POST">
@@ -18,5 +18,5 @@ export default function() {
                 <style>{styles}</style>
             </body>
         </html>
-    )
+    );
 }
