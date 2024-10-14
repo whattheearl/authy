@@ -3,7 +3,7 @@ import Elysia, { error, redirect, t } from 'elysia';
 import page from './page';
 import { getUserByUsername } from '../../lib/users';
 
-export const signin = new Elysia({ prefix: '/' })
+export const signin = new Elysia()
     .use(html())
     .get(
         '/',
