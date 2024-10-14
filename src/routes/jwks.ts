@@ -1,6 +1,7 @@
 import Elysia from 'elysia';
+import { getPublicJwks } from '../lib/jwks';
 
-export const jwks = new Elysia().get('/jwks', () => {
-    throw new Error("not implemented")
-    return [{}];
+export const jwks = new Elysia().get('/jwks', async () => {
+    const keys = await getPublicJwks();
+    return { keys };
 });
