@@ -1,4 +1,4 @@
-import { getDb } from './utils';
+import { getDb } from './db';
 
 export interface Client {
     id: number;
@@ -19,6 +19,7 @@ export const clients = [
 ] as Client[];
 
 export function seedClients(clients: Client[]) {
+    dropTable();
     createTable();
 
     for (const client of clients) {
@@ -46,7 +47,7 @@ export function addClient(client: Client) {
     const db = getDb();
     const { id, name, client_id, client_secret, redirect_uri } = client;
     db.run(
-        `INSERT OR REPLACE INTO clients (id, name, client_id, client_secret, redirect_uri) VALUES (?,?,?,?,?,?)`,
+        `INSERT OR REPLACE INTO clients (id, name, client_id, client_secret, redirect_uri) VALUES (?,?,?,?,?)`,
         [id, name, client_id, client_secret, redirect_uri],
     );
 }
@@ -78,3 +79,4 @@ export function getClientByClientId(client_id: string) {
     if (!client) return null;
     return client as Client;
 }
+

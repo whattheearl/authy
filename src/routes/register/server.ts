@@ -1,7 +1,7 @@
 import html from '@elysiajs/html';
 import Elysia, { error, redirect, t } from 'elysia';
 import page from './page';
-import { addUser, getUserByUsername } from '../../lib/users';
+import { addUser, getUserByUsername } from '$data/users';
 
 export const register = new Elysia({ prefix: '/register' })
     .use(html())

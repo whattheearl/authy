@@ -1,7 +1,7 @@
 import Elysia, { t } from 'elysia';
-import { getClientByClientId } from '../lib/clients';
-import { randomBytes } from '../lib/oidc';
-import { addCodeChallenge } from '../lib/code-verifier';
+import { getClientByClientId } from '$data/clients';
+import { randomBytes } from '$lib/oidc';
+import { addCodeChallenge } from '$data/code-verifier';
 
 export const authorization = new Elysia().get(
     '/authorization',
@@ -17,6 +17,7 @@ export const authorization = new Elysia().get(
             redirect_uri,
         },
     }) => {
+        console.log({ client_id })
         const client = getClientByClientId(client_id);
         if (!client) {
             console.error('no client');
@@ -32,7 +33,6 @@ export const authorization = new Elysia().get(
         }
 
         // TODO: validate scope
-
         console.log('session.value', sess.value);
         const sessionValue = !sess.value ? '{}' : sess.value;
         const session = JSON.parse(sessionValue);
@@ -56,7 +56,7 @@ export const authorization = new Elysia().get(
         console.log('constructing redirect_uri');
         const url = new URL(redirect_uri);
         const key = addCodeChallenge({
-            key: randomBytes(32),
+            code: randomBytes(32),
             code_challenge,
             nonce,
         });

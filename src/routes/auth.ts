@@ -1,3 +1,4 @@
+// WARNING: this needs to be written to add identity provider
 import { Elysia, redirect, t } from 'elysia';
 import { randomBytes } from '../lib/oidc';
 import {
@@ -9,12 +10,8 @@ import {
     hashCodeChallenge,
     getJwks,
     verifyOauthJwt,
-    SignHMAC,
-    importHMAC,
-    verifyHMAC,
 } from '../lib/oidc';
 import { getClientByName } from '../lib/clients';
-import { tempKey } from './key';
 
 export const authRoute = new Elysia({ prefix: 'auth' })
     .post(
@@ -33,7 +30,6 @@ export const authRoute = new Elysia({ prefix: 'auth' })
         }) => {
             console.debug('client.name: ', { name });
             if (!name) return new Response('not found', { status: 404 });
-
             const client = getClientByName(name);
             console.debug('client: ', { client });
             if (!client) return new Response('not found', { status: 404 });

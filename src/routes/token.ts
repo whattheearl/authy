@@ -1,7 +1,8 @@
 import Elysia, { error, t } from 'elysia';
-import { getCodeChallenge } from '../lib/code-verifier';
-import { getClientByClientId } from '../lib/clients';
-import { signJwt } from '../lib/jwks';
+import { getCodeChallenge } from '$data/code-verifier';
+import { getClientByClientId } from '$data/clients';
+import { signJwt } from '$lib/jwt/sign-jwt';
+import { getPrivateJwks } from '$data/jwks';
 
 export const token = new Elysia({ prefix: '/token' }).post(
     '/',
@@ -40,18 +41,20 @@ export const token = new Elysia({ prefix: '/token' }).post(
             'SHA-256',
             Buffer.from(code_verifier),
         );
+
         const isMatch =
             Buffer.from(hashBuf).toString('base64url') == code_challenge;
         if (!isMatch) {
             return error(400, 'invalid code_challange');
         }
 
-        const access_token = await signJwt({});
+        const key = getPrivateJwks();
+        const access_token = await signJwt({}, key);
         const id_token = await signJwt({
             sub: '1',
             email: 'me@wte.com',
             nonce: codeChallenge.nonce,
-        });
+        }, key);
         console.log({ access_token, id_token });
         return {
             access_token,

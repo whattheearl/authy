@@ -1,7 +1,7 @@
 import html from '@elysiajs/html';
 import Elysia, { error, redirect, t } from 'elysia';
 import page from './page';
-import { getUserByUsername } from '../../lib/users';
+import { getUserByUsername, getUsers } from '$data/users';
 
 export const signin = new Elysia()
     .use(html())
@@ -40,8 +40,14 @@ export const signin = new Elysia()
             console.log(username, password);
             // INFO: validate user and create session
             const user = getUserByUsername(username);
-            console.log('user exists', { user });
-            if (!user || !user.password || !user.username) return error(404);
+            const users = getUsers();
+            console.log(users);
+            console.log('user', { user });
+            if (!user || !user.password || !user.username) {
+                console.log('user not found')
+                return error(404);
+            }
+
             const isMatch = await Bun.password.verify(password, user.password);
             console.log('credentials are matched');
             if (!isMatch) {

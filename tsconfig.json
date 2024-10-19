@@ -1,5 +1,9 @@
 {
     "compilerOptions": {
+        "paths": {
+            "$data/*": ["./src/data/*"],
+            "$lib/*": ["./src/lib/*"]
+        },
         "jsx": "react",
         "jsxFactory": "Html.createElement",
         "jsxFragmentFactory": "Html.Fragment",
