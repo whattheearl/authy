@@ -9,8 +9,10 @@ import { register } from './routes/register/server';
 import { apps } from './routes/apps/server';
 import { token } from './routes/token';
 import { clients, seedClients } from '$data/clients';
+import { seedJWKs } from '$lib/jwt';
 
 seedClients(clients);
+seedJWKs()
 
 const app = new Elysia()
     .use(swagger())
@@ -23,8 +25,7 @@ const app = new Elysia()
     .use(apps) // http://localhost:3000/apps
     .use(token) // http://localhost:3000/token
     .listen(3000);
-// token endpoint
-// userinfo endpoint
+
 console.log(
     `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`,
 );

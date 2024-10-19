@@ -1,6 +1,5 @@
 import { Elysia, t } from 'elysia';
-import { getClientByClientId, getClientById, getClients } from '../lib/clients';
-
+import { getClientByClientId, getClientById, getClients } from '$data/clients';
 
 export const clientRoute = new Elysia({ prefix: '/clients' })
     .get('/', () => {

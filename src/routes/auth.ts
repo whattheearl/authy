@@ -1,6 +1,6 @@
 // WARNING: this needs to be written to add identity provider
 import { Elysia, redirect, t } from 'elysia';
-import { randomBytes } from '../lib/oidc';
+import { randomBytes } from '$lib/oidc';
 import {
     OidcCookie,
     generateAuthorizationUrl,
@@ -10,8 +10,8 @@ import {
     hashCodeChallenge,
     getJwks,
     verifyOauthJwt,
-} from '../lib/oidc';
-import { getClientByName } from '../lib/clients';
+} from '$lib/oidc';
+import { getClientByName } from '$data/clients';
 
 export const authRoute = new Elysia({ prefix: 'auth' })
     .post(
