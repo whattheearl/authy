@@ -1,4 +1,4 @@
-import { getDb } from './db';
+import { getDb } from './_core';
 import * as jose from 'jose';
 
 export const seedJwks = async () => {

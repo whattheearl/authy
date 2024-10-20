@@ -37,12 +37,10 @@ export const signin = new Elysia()
     .post(
         '/',
         async ({ body: { username, password }, cookie: { sess, oauth } }) => {
-            console.log(username, password);
+            console.log('signin', { username, password });
             // INFO: validate user and create session
             const user = getUserByUsername(username);
-            const users = getUsers();
-            console.log(users);
-            console.log('user', { user });
+            console.log('retrieve user', { user });
             if (!user || !user.password || !user.username) {
                 console.log('user not found')
                 return error(404);

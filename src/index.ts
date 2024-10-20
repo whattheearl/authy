@@ -10,9 +10,11 @@ import { apps } from './routes/apps/server';
 import { token } from './routes/token';
 import { clients, seedClients } from '$data/clients';
 import { seedJwks } from '$data/jwks';
+import { seedUsersTable } from '$data/users';
 
 seedClients(clients);
 seedJwks();
+await seedUsersTable();
 
 const app = new Elysia()
     .use(swagger())
