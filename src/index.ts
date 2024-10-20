@@ -12,7 +12,7 @@ import { clients, seedClients } from '$data/clients';
 import { seedJWKs } from '$lib/jwt';
 
 seedClients(clients);
-seedJWKs()
+seedJWKs();
 
 const app = new Elysia()
     .use(swagger())
