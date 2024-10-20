@@ -45,6 +45,10 @@ export const getUsers = () => {
     return users;
 };
 
+export const getUserById = (id: number) => {
+    return db.query('SELECT * FROM users WHERE id = ?').get(id) as User;
+}
+
 export const getUserByUsername = (username: string) => {
     try {
         return db.query('SELECT * FROM users WHERE username = ?').get(username) as User;

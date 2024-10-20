@@ -1,7 +1,8 @@
 import Elysia, { error, t } from 'elysia';
-import { getCodeChallenge } from '$data/code-verifier';
+import { getCodeChallenge } from '$data/code';
 import { getClientByClientId } from '$data/clients';
 import { signJwt } from '$lib/jwt';
+import { getUserById } from '$data/users';
 
 export const token = new Elysia({ prefix: '/token' }).post(
     '/',
@@ -49,9 +50,11 @@ export const token = new Elysia({ prefix: '/token' }).post(
         }
 
         const access_token = await signJwt({});
+        const user = getUserById(codeChallenge.user_id);
         const id_token = await signJwt({
-            sub: '1',
-            email: 'me@wte.com',
+            sub: user.id,
+            username: user.username,
+            email: `${user.username}@authy.wte.sh`,
             nonce: codeChallenge.nonce,
         });
         console.log({ access_token, id_token });

@@ -2,6 +2,7 @@ import html from '@elysiajs/html';
 import Elysia, { error, redirect, t } from 'elysia';
 import page from './page';
 import { getUserByUsername, getUsers } from '$data/users';
+import { exportSession, Session } from '$data/session';
 
 export const signin = new Elysia()
     .use(html())
@@ -52,8 +53,8 @@ export const signin = new Elysia()
                 console.log('password does not match');
                 return error(404);
             }
-            const session = { username: user.username };
-            sess.value = JSON.stringify(session);
+            const session = exportSession({ user_id: user.id });
+            sess.value = session;
             console.log('session created', session);
             // INFO: send to app page if no previous oauth
             if (!oauth.value) {

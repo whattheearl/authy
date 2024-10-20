@@ -72,10 +72,15 @@ export function getClientByName(name: string) {
 }
 
 export function getClientByClientId(client_id: string) {
-    const db = getDb();
-    const client = db
-        .query(`SELECT * FROM clients WHERE client_id = ?`)
-        .get(client_id);
-    if (!client) return null;
-    return client as Client;
+    try {
+        const db = getDb();
+        const client = db
+            .query(`SELECT * FROM clients WHERE client_id = ?`)
+            .get(client_id);
+        if (!client) return null;
+        return client as Client;
+    } catch (err) {
+        console.error('unable to retrieve client', err);
+        return null;
+    }
 }

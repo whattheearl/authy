@@ -11,7 +11,10 @@ import { token } from './routes/token';
 import { clients, seedClients } from '$data/clients';
 import { seedJwks } from '$data/jwks';
 import { seedUsersTable } from '$data/users';
+import { createCodeTable, dropCodeTable } from '$data/code';
 
+dropCodeTable();
+createCodeTable();
 seedClients(clients);
 seedJwks();
 await seedUsersTable();

@@ -1,7 +1,8 @@
 import Elysia, { t } from 'elysia';
 import { getClientByClientId } from '$data/clients';
 import { randomBytes } from '$lib/utils';
-import { addCodeChallenge } from '$data/code-verifier';
+import { AddCodeChallenge, addCodeChallenge } from '$data/code';
+import { importSession } from '$data/session';
 
 export const authorization = new Elysia().get(
     '/authorization',
@@ -17,12 +18,12 @@ export const authorization = new Elysia().get(
             redirect_uri,
         },
     }) => {
-        console.log({ client_id })
         const client = getClientByClientId(client_id);
         if (!client) {
             console.error('no client');
             return new Response('Client not found.', { status: 404 });
         }
+        console.log('client found', client);
 
         if (redirect_uri != client.redirect_uri) {
             console.error('miss mathch redirect');
@@ -31,14 +32,14 @@ export const authorization = new Elysia().get(
                 { status: 400 },
             );
         }
+        console.debug('redirect_uri is valid', redirect_uri);
 
         // TODO: validate scope
         console.log('session.value', sess.value);
-        const sessionValue = !sess.value ? '{}' : sess.value;
-        const session = JSON.parse(sessionValue);
+        const session = importSession(sess.value);
         console.log('session', session);
-        console.debug({ session });
-        if (!session.username) {
+        if (!session) {
+            console.log('no user session')
             oauth.value = JSON.stringify({
                 client_id,
                 scope,
@@ -53,14 +54,16 @@ export const authorization = new Elysia().get(
                 headers: { location: `/` },
             });
         }
-        console.log('constructing redirect_uri');
         const url = new URL(redirect_uri);
-        const key = addCodeChallenge({
+        console.log('constructing redirect_uri');
+        const codeChallenge = {
+            user_id: session.user_id,
             code: randomBytes(32),
             code_challenge,
             nonce,
-        });
-        url.searchParams.set('code', key);
+        } as AddCodeChallenge;
+        addCodeChallenge(codeChallenge);
+        url.searchParams.set('code', codeChallenge.code);
         url.searchParams.set('state', state);
         return new Response('redirect', {
             status: 302,
