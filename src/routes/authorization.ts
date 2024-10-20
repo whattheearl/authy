@@ -1,6 +1,6 @@
 import Elysia, { t } from 'elysia';
 import { getClientByClientId } from '$data/clients';
-import { randomBytes } from '$lib/oidc';
+import { randomBytes } from '$lib/utils';
 import { addCodeChallenge } from '$data/code-verifier';
 
 export const authorization = new Elysia().get(

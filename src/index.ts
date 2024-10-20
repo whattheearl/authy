@@ -9,10 +9,10 @@ import { register } from './routes/register/server';
 import { apps } from './routes/apps/server';
 import { token } from './routes/token';
 import { clients, seedClients } from '$data/clients';
-import { seedJWKs } from '$lib/jwt';
+import { seedJwks } from '$data/jwks';
 
 seedClients(clients);
-seedJWKs();
+seedJwks();
 
 const app = new Elysia()
     .use(swagger())

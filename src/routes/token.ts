@@ -15,6 +15,7 @@ export const token = new Elysia({ prefix: '/token' }).post(
             redirect_uri,
         },
     }) => {
+        // TODO: validate grant type
         console.log('inside token code:', code);
         const codeChallenge = getCodeChallenge(code);
         console.log('code challenge', codeChallenge);
