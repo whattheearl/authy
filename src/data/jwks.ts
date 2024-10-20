@@ -72,4 +72,3 @@ export const getPrivateJwk = async () => {
         console.error('unable to retrive private key');
     }
 };
-

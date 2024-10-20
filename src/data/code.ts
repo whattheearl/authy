@@ -1,4 +1,4 @@
-import { getDb } from "./_core";
+import { getDb } from './_core';
 
 const db = getDb();
 
@@ -9,12 +9,12 @@ export const createCodeTable = () => {
         code VARCHAR(255),
         code_challenge VARCHAR(255),
         nonce VARCHAR(255)
-    )`)
-}
+    )`);
+};
 
 export const dropCodeTable = () => {
     db.run('DROP TABLE IF EXISTS code');
-}
+};
 
 export interface AddCodeChallenge {
     code: string;
@@ -25,14 +25,22 @@ export interface AddCodeChallenge {
 
 export const addCodeChallenge = (codeChallenge: AddCodeChallenge) => {
     try {
-        db.run('INSERT INTO code (code, code_challenge, nonce, user_id) VALUES (?,?,?,?)', [codeChallenge.code, codeChallenge.code_challenge, codeChallenge.nonce, codeChallenge.user_id]);
-    } catch (err)  {
-        console.error("unable to add code challenge", codeChallenge, err);
+        db.run(
+            'INSERT INTO code (code, code_challenge, nonce, user_id) VALUES (?,?,?,?)',
+            [
+                codeChallenge.code,
+                codeChallenge.code_challenge,
+                codeChallenge.nonce,
+                codeChallenge.user_id,
+            ],
+        );
+    } catch (err) {
+        console.error('unable to add code challenge', codeChallenge, err);
     }
-}
+};
 
 export function removeCodeChallenge(code: string) {
-    db.run('DELETE FROM code WHERE code = ?', [code])
+    db.run('DELETE FROM code WHERE code = ?', [code]);
 }
 
 export interface CodeChallenge {
@@ -44,5 +52,7 @@ export interface CodeChallenge {
 }
 
 export function getCodeChallenge(code: string) {
-    return db.query('SELECT * FROM code WHERE code = ?').get(code) as CodeChallenge;
+    return db
+        .query('SELECT * FROM code WHERE code = ?')
+        .get(code) as CodeChallenge;
 }

@@ -43,7 +43,7 @@ export const signin = new Elysia()
             const user = getUserByUsername(username);
             console.log('retrieve user', { user });
             if (!user || !user.password || !user.username) {
-                console.log('user not found')
+                console.log('user not found');
                 return error(404);
             }
 

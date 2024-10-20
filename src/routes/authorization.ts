@@ -39,7 +39,7 @@ export const authorization = new Elysia().get(
         const session = importSession(sess.value);
         console.log('session', session);
         if (!session) {
-            console.log('no user session')
+            console.log('no user session');
             oauth.value = JSON.stringify({
                 client_id,
                 scope,
