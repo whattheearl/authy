@@ -19,15 +19,15 @@ export const clients = [
 ] as Client[];
 
 export function seedClients(clients: Client[]) {
-    dropTable();
-    createTable();
+    dropClientTable();
+    createClientTable();
 
     for (const client of clients) {
         addClient(client);
     }
 }
 
-export function createTable() {
+export function createClientTable() {
     const db = getDb();
     db.run(`CREATE TABLE IF NOT EXISTS clients(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,9 +38,9 @@ export function createTable() {
   )`);
 }
 
-export function dropTable() {
+export function dropClientTable() {
     const db = getDb();
-    db.run(`DROP TABLE clients`);
+    db.run(`DROP TABLE IF EXISTS clients`);
 }
 
 export function addClient(client: Client) {
@@ -79,4 +79,3 @@ export function getClientByClientId(client_id: string) {
     if (!client) return null;
     return client as Client;
 }
-
