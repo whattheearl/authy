@@ -9,15 +9,27 @@ export const signin = new Elysia()
     .get(
         '/',
         ({ html, cookie: { sess } }) => {
+            const enableRegistration =
+                Bun.env.ENABLE_REGISTRATION?.toLowerCase() === 'true';
             console.log(sess, !sess.value);
             if (!sess.value) {
-                return html(page());
+                return html(
+                    page({
+                        enableRegistration,
+                    }),
+                );
             }
 
             const session = JSON.parse(sess.value ?? '{}') as Session;
             console.log(session);
             if (!session.user) {
-                return html(page());
+                return html(
+                    page({
+                        enableRegistration:
+                            Bun.env.ENABLE_REGISTRATION?.toLowerCase() ===
+                            'true',
+                    }),
+                );
             }
 
             return redirect('/apps');

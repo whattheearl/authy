@@ -2,7 +2,12 @@ import { Html } from '@elysiajs/html';
 // @ts-ignore
 import styles from './styles.css' with { type: 'text' };
 
-export default function () {
+function RegistrationLink({ enableRegistration }: { enableRegistration: boolean }) {
+    if (enableRegistration) return <a href="/register">Register here</a>
+    return null;
+}
+
+export default function({ enableRegistration }: { enableRegistration: boolean }) {
     return (
         <html>
             <body>
@@ -14,7 +19,7 @@ export default function () {
                     <label for="password">password</label>
                     <input type="password" id="password" name="password" />
                     <button>sign in to authy</button>
-                    <a href="/register">Register here</a>
+                    <RegistrationLink enableRegistration={enableRegistration} />
                 </form>
                 <style>{styles}</style>
             </body>

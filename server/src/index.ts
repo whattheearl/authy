@@ -19,17 +19,21 @@ seedClients(clients);
 seedJwks();
 await seedUsersTable();
 
-const app = new Elysia()
-    .use(swagger())
-    .use(openidConfiguration) // http://localhost:3000/.well-known/openid-configuration
+const app = new Elysia();
+
+if (Bun.env.NODE_ENV !== 'PRODUCTION') app.use(swagger());
+
+app.use(openidConfiguration) // http://localhost:3000/.well-known/openid-configuration
     .use(jwks) // http://localhost:3000/jwks
     .use(authorization) // http://localhost:3000/authorization
     .use(signin) // http://localhost:3000/
     .use(signout) // http://localhost:3000/signout
-    .use(register) // http://localhost:3000/register
     .use(apps) // http://localhost:3000/apps
-    .use(token) // http://localhost:3000/token
-    .listen(3000);
+    .use(token); // http://localhost:3000/token
+
+if (Bun.env.ENABLE_REGISTRATION?.toLowerCase() === 'true') app.use(register); // http://localhost:3000/register
+
+app.listen(3000);
 
 console.log(
     `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`,
