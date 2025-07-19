@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "paths": {
-            "$db/*": ["src/db/*"],
+            "$db/*": ["./src/db/*"],
             "$lib/*": ["./src/lib/*"]
         },
         "jsx": "react",

@@ -45,11 +45,10 @@ export const addUser = async (u: UserCreate) => {
 
 export const importUser = async (u: User) => {
     const password = await Bun.password.hash(u.password);
-    db.run('INSERT INTO users (id, username, password) VALUES (?,?,?)', [
-        u.id,
-        u.username,
-        password,
-    ]);
+    db.run(
+        'INSERT OR IGNORE INTO users (id, username, password) VALUES (?,?,?)',
+        [u.id, u.username, password],
+    );
 };
 
 export const getUsers = () => {

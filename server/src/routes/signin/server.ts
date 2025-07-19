@@ -1,13 +1,13 @@
 import html from '@elysiajs/html';
 import Elysia, { redirect, t, NotFoundError } from 'elysia';
 import page from './page';
-import { getUserByUsername } from '../../db/users';
-import { exportSession, Session } from '../../lib/session';
+import { getUserByUsername } from '$db/users';
+import { exportSession, Session } from '$lib/session';
 
 export const signin = new Elysia()
     .use(html())
     .get(
-        '/',
+        '/signin',
         ({ html, cookie: { sess } }) => {
             const enableRegistration =
                 Bun.env.ENABLE_REGISTRATION?.toLowerCase() === 'true';
