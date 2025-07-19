@@ -1,5 +1,8 @@
 export interface Session {
-    user_id: number;
+    user: {
+        user_id: number;
+        username: string;
+    };
 }
 
 export const importSession = (sessionTxt: string | undefined) => {

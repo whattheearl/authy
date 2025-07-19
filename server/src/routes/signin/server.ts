@@ -1,7 +1,7 @@
 import html from '@elysiajs/html';
-import Elysia, { error, redirect, t } from 'elysia';
+import Elysia, { redirect, t, NotFoundError } from 'elysia';
 import page from './page';
-import { getUserByUsername, getUsers } from '$data/users';
+import { getUserByUsername } from '$data/users';
 import { exportSession, Session } from '$data/session';
 
 export const signin = new Elysia()
@@ -9,12 +9,14 @@ export const signin = new Elysia()
     .get(
         '/',
         ({ html, cookie: { sess } }) => {
+            console.log(sess, !sess.value);
             if (!sess.value) {
                 return html(page());
             }
 
-            const session = JSON.parse(sess.value ?? '{}');
-            if (!session.username) {
+            const session = JSON.parse(sess.value ?? '{}') as Session;
+            console.log(session);
+            if (!session.user) {
                 return html(page());
             }
 
@@ -39,24 +41,29 @@ export const signin = new Elysia()
         '/',
         async ({ body: { username, password }, cookie: { sess, oauth } }) => {
             console.log('signin', { username, password });
-            // INFO: validate user and create session
             const user = getUserByUsername(username);
             console.log('retrieve user', { user });
             if (!user || !user.password || !user.username) {
                 console.log('user not found');
-                return error(404);
+                return new NotFoundError('User not found.');
             }
 
             const isMatch = await Bun.password.verify(password, user.password);
             console.log('credentials are matched');
             if (!isMatch) {
                 console.log('password does not match');
-                return error(404);
+                return new NotFoundError('User not found.');
             }
-            const session = exportSession({ user_id: user.id });
+
+            const session = exportSession({
+                user: {
+                    user_id: user.id,
+                    username: user.username,
+                },
+            });
             sess.value = session;
             console.log('session created', session);
-            // INFO: send to app page if no previous oauth
+            // INFO: send to app page no redirect found
             if (!oauth.value) {
                 console.log('no oauth flow found');
                 return redirect('/apps');
