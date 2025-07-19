@@ -1,8 +1,8 @@
 import Elysia, { t } from 'elysia';
-import { getClientByClientId } from '$data/clients';
+import { getClientByClientId } from '$db/clients';
 import { randomBytes } from '$lib/utils';
-import { AddCodeChallenge, addCodeChallenge } from '$data/code';
-import { importSession } from '$data/session';
+import { AddCodeChallenge, addCodeChallenge } from '$db/code';
+import { importSession } from '$lib/session';
 
 export const authorization = new Elysia().get(
     '/authorization',
@@ -57,7 +57,7 @@ export const authorization = new Elysia().get(
         const url = new URL(redirect_uri);
         console.log('constructing redirect_uri');
         const codeChallenge = {
-            user_id: session.user_id,
+            user_id: session.user.user_id,
             code: randomBytes(32),
             code_challenge,
             nonce,

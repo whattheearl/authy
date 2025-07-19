@@ -1,4 +1,4 @@
-import { getDb } from './_core';
+import { getDb } from './db';
 
 export interface Client {
     id: number;

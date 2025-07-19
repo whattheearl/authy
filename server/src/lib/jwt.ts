@@ -1,5 +1,5 @@
 import * as jose from 'jose';
-import { getPrivateJwk } from '$data/jwks';
+import { getPrivateJwk } from '../db/jwks';
 
 export const signJwt = async (data: any) => {
     try {

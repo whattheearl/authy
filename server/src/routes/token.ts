@@ -1,8 +1,8 @@
 import Elysia, { error, t } from 'elysia';
-import { getCodeChallenge } from '$data/code';
-import { getClientByClientId } from '$data/clients';
+import { getCodeChallenge } from '$db/code';
+import { getClientByClientId } from '$db/clients';
 import { signJwt } from '$lib/jwt';
-import { getUserById } from '$data/users';
+import { getUserById } from '$db/users';
 
 export const token = new Elysia({ prefix: '/token' }).post(
     '/',

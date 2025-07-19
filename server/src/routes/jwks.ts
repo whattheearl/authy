@@ -1,5 +1,5 @@
 import Elysia from 'elysia';
-import { getPublicJwk } from '$data/jwks';
+import { getPublicJwk } from '$db/jwks';
 
 export const jwks = new Elysia().get('/jwks', async () => {
     const keys = getPublicJwk();

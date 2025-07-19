@@ -13,7 +13,7 @@ export const importSession = (sessionTxt: string | undefined) => {
     try {
         const session = JSON.parse(sessionTxt) as Session;
         console.log({ session });
-        if (!Number.isInteger(session.user_id)) {
+        if (!Number.isInteger(session.user.user_id)) {
             return null;
         }
         return session;

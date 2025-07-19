@@ -1,7 +1,7 @@
 import html from '@elysiajs/html';
 import Elysia, { error, redirect, t } from 'elysia';
 import page from './page';
-import { addUser, getUserByUsername } from '$data/users';
+import { importUser, getUserByUsername } from '../../db/users';
 
 export const register = new Elysia({ prefix: '/register' })
     .use(html())
@@ -15,7 +15,7 @@ export const register = new Elysia({ prefix: '/register' })
             }
 
             const hashedPassword = await Bun.password.hash(password);
-            await addUser({ username, password: hashedPassword });
+            await importUser({ username, password: hashedPassword });
 
             return redirect('/');
         },

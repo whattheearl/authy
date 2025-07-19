@@ -1,8 +1,8 @@
 import html from '@elysiajs/html';
 import Elysia, { redirect, t, NotFoundError } from 'elysia';
 import page from './page';
-import { getUserByUsername } from '$data/users';
-import { exportSession, Session } from '$data/session';
+import { getUserByUsername } from '../../db/users';
+import { exportSession, Session } from '../../lib/session';
 
 export const signin = new Elysia()
     .use(html())
@@ -43,7 +43,11 @@ export const signin = new Elysia()
                     {
                         httpOnly: true,
                         secure: Bun.env.cookie__secure == 'true',
-                        secrets: 'dev-secret',
+                        secrets:
+                            Bun.env.NODE_ENV === 'PRODUCTION'
+                                ? Bun.env.COOKIE_SECRET
+                                : 'dev-secret',
+                        sameSite: 'strict',
                     },
                 ),
             ),
@@ -116,8 +120,11 @@ export const signin = new Elysia()
                     {
                         httpOnly: true,
                         secure: Bun.env.cookie__secure == 'true',
-                        secrets: 'dev-secret',
-                        sameSite: 'lax',
+                        secrets:
+                            Bun.env.NODE_ENV === 'PRODUCTION'
+                                ? Bun.env.COOKIE_SECRET
+                                : 'dev-secret',
+                        sameSite: 'strict',
                     },
                 ),
             ),

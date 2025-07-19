@@ -1,7 +1,7 @@
 import html from '@elysiajs/html';
 import Elysia, { redirect, t } from 'elysia';
 import page from './page';
-import { Session } from '$data/session';
+import { Session } from '../../lib/session';
 
 export const apps = new Elysia({ prefix: '/apps' }).use(html()).get(
     '/',

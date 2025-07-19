@@ -1,7 +1,12 @@
-import { getDb } from './_core';
+import { getDb } from './db';
 
 export interface User {
     id: number;
+    username: string;
+    password: string;
+}
+
+export interface UserCreate {
     username: string;
     password: string;
 }
@@ -27,25 +32,22 @@ export const seedUsersTable = async () => {
         username: 'testtesttest',
         password: 'testtesttest',
     } as User;
-    const password = await Bun.password.hash(user.password);
-    db.run(
-        `INSERT OR REPLACE INTO users (id, username, password) VALUES (?,?,?)`,
-        [user.id, user.username, password],
-    );
+    await importUser(user);
 };
 
-export const addUser = async (user: User) => {
-    const password = await Bun.password.hash(user.password);
-    if (user.id) {
-        db.run('INSERT INTO users (id, username, password) VALUES (?,?,?)', [
-            user.id,
-            user.username,
-            password,
-        ]);
-        return;
-    }
+export const addUser = async (u: UserCreate) => {
+    const password = await Bun.password.hash(u.password);
     db.run('INSERT INTO users (username, password) VALUES (?,?)', [
-        user.username,
+        u.username,
+        password,
+    ]);
+};
+
+export const importUser = async (u: User) => {
+    const password = await Bun.password.hash(u.password);
+    db.run('INSERT INTO users (id, username, password) VALUES (?,?,?)', [
+        u.id,
+        u.username,
         password,
     ]);
 };
