@@ -4,7 +4,7 @@ export const cookieConfig = t.Cookie(
     {
         user: t.Optional(
             t.Object({
-                userId: t.String(),
+                userId: t.Number(),
                 username: t.String(),
             }),
         ),

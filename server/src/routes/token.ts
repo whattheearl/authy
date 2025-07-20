@@ -1,4 +1,4 @@
-import Elysia, { error, t } from 'elysia';
+import Elysia, { status, NotFoundError, t } from 'elysia';
 import { getCodeChallenge } from '$db/code';
 import { getClientByClientId } from '$db/clients';
 import { signJwt } from '$lib/jwt';
@@ -21,19 +21,18 @@ export const token = new Elysia({ prefix: '/token' }).post(
         const codeChallenge = getCodeChallenge(code);
         console.log('code challenge', codeChallenge);
         if (!codeChallenge) {
-            console.error('invalid code_challegne');
-            return error(401, 'invalid code_challange');
+            return status(401, 'invalid code_challange');
         }
 
         console.log('validating client');
         const client = getClientByClientId(client_id);
         if (!client || client.client_secret != client_secret) {
-            return error(404, 'client not found');
+            return new NotFoundError('Client not found.');
         }
 
         console.log('validating redirect');
         if (client.redirect_uri != redirect_uri) {
-            return error(400, 'invalid redirect_uri');
+            return status(400, 'invalid redirect_uri');
         }
 
         console.log('validating challenge');
@@ -46,7 +45,7 @@ export const token = new Elysia({ prefix: '/token' }).post(
         const isMatch =
             Buffer.from(hashBuf).toString('base64url') == code_challenge;
         if (!isMatch) {
-            return error(400, 'invalid code_challange');
+            return status(400, 'invalid code_challenge');
         }
 
         const access_token = await signJwt({});

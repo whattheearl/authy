@@ -2,37 +2,22 @@ import html from '@elysiajs/html';
 import Elysia, { redirect, t, NotFoundError } from 'elysia';
 import page from './page';
 import { getUserByUsername } from '$db/users';
-import { exportSession, Session } from '$lib/session';
 import { cookieConfig } from '$lib/cookie';
 
 export const signin = new Elysia()
     .use(html())
     .get(
         '/signin',
-        ({ html, cookie: { sess } }) => {
+        ({ html, cookie: { user } }) => {
             const enableRegistration =
                 Bun.env.ENABLE_REGISTRATION?.toLowerCase() === 'true';
-            console.log(sess, !sess.value);
-            if (!sess.value) {
+            if (!user.value) {
                 return html(
                     page({
                         enableRegistration,
                     }),
                 );
             }
-
-            const session = JSON.parse(sess.value ?? '{}') as Session;
-            console.log(session);
-            if (!session.user) {
-                return html(
-                    page({
-                        enableRegistration:
-                            Bun.env.ENABLE_REGISTRATION?.toLowerCase() ===
-                            'true',
-                    }),
-                );
-            }
-
             return redirect('/apps');
         },
         {
@@ -41,30 +26,30 @@ export const signin = new Elysia()
     )
     .post(
         '/',
-        async ({ body: { username, password }, cookie: { sess, oauth } }) => {
+        async ({ body: { username, password }, cookie: { user, oauth } }) => {
             console.log('signin', { username, password });
-            const user = getUserByUsername(username);
+            const exists = getUserByUsername(username);
             console.log('retrieve user', { user });
-            if (!user || !user.password || !user.username) {
+            if (!exists) {
                 console.log('user not found');
                 return new NotFoundError('User not found.');
             }
 
-            const isMatch = await Bun.password.verify(password, user.password);
+            const isMatch = await Bun.password.verify(
+                password,
+                exists.password,
+            );
             console.log('credentials are matched');
             if (!isMatch) {
                 console.log('password does not match');
                 return new NotFoundError('User not found.');
             }
 
-            const session = exportSession({
-                user: {
-                    user_id: user.id,
-                    username: user.username,
-                },
-            });
-            sess.value = session;
-            console.log('session created', session);
+            user.value = {
+                userId: exists.id,
+                username: exists.username,
+            };
+            console.log('session created', user);
             // INFO: send to app page no redirect found
             if (!oauth.value) {
                 console.log('no oauth flow found');

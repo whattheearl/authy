@@ -2,13 +2,12 @@ import Elysia, { t } from 'elysia';
 import { getClientByClientId } from '$db/clients';
 import { randomBytes } from '$lib/utils';
 import { AddCodeChallenge, addCodeChallenge } from '$db/code';
-import { importSession } from '$lib/session';
 import { cookieConfig } from '$lib/cookie';
 
 export const authorization = new Elysia().get(
     '/authorization',
     async ({
-        cookie: { oauth, sess },
+        cookie: { oauth, user },
         query: {
             client_id,
             scope,
@@ -36,10 +35,7 @@ export const authorization = new Elysia().get(
         console.debug('redirect_uri is valid', redirect_uri);
 
         // TODO: validate scope
-        console.log('session.value', sess.value);
-        const session = importSession(sess.value);
-        console.log('session', session);
-        if (!session) {
+        if (!user.value) {
             console.log('no user session');
             oauth.value = JSON.stringify({
                 client_id,
@@ -58,7 +54,7 @@ export const authorization = new Elysia().get(
         const url = new URL(redirect_uri);
         console.log('constructing redirect_uri');
         const codeChallenge = {
-            user_id: session.user.user_id,
+            user_id: user.value.userId,
             code: randomBytes(32),
             code_challenge,
             nonce,
