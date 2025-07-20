@@ -2,6 +2,7 @@ import html from '@elysiajs/html';
 import Elysia, { redirect, t } from 'elysia';
 import page from './page';
 import { Session } from '../../lib/session';
+import { cookieConfig } from '$lib/cookie';
 
 export const apps = new Elysia({ prefix: '/apps' }).use(html()).get(
     '/',
@@ -24,17 +25,6 @@ export const apps = new Elysia({ prefix: '/apps' }).use(html()).get(
         );
     },
     {
-        cookie: t.Optional(
-            t.Cookie(
-                {
-                    sess: t.Optional(t.String()),
-                },
-                {
-                    httpOnly: true,
-                    secure: Bun.env.cookie__secure == 'true',
-                    secrets: 'dev-secret',
-                },
-            ),
-        ),
+        cookie: cookieConfig,
     },
 );

@@ -1,3 +1,4 @@
+import { cookieConfig } from '$lib/cookie';
 import Elysia, { redirect, t } from 'elysia';
 
 export const signout = new Elysia({ prefix: 'signout' }).post(
@@ -9,17 +10,6 @@ export const signout = new Elysia({ prefix: 'signout' }).post(
         return redirect('/');
     },
     {
-        cookie: t.Optional(
-            t.Cookie(
-                {
-                    sess: t.Optional(t.String()),
-                },
-                {
-                    httpOnly: true,
-                    secure: Bun.env.cookie__secure == 'true',
-                    secrets: 'dev-secret',
-                },
-            ),
-        ),
+        cookie: cookieConfig,
     },
 );

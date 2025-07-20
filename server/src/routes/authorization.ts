@@ -3,6 +3,7 @@ import { getClientByClientId } from '$db/clients';
 import { randomBytes } from '$lib/utils';
 import { AddCodeChallenge, addCodeChallenge } from '$db/code';
 import { importSession } from '$lib/session';
+import { cookieConfig } from '$lib/cookie';
 
 export const authorization = new Elysia().get(
     '/authorization',
@@ -71,17 +72,7 @@ export const authorization = new Elysia().get(
         });
     },
     {
-        cookie: t.Cookie(
-            {
-                sess: t.Optional(t.String()),
-                oauth: t.Optional(t.String()),
-            },
-            {
-                secure: Bun.env.NODE_ENV == 'PRODUCTION',
-                httpOnly: true,
-                secrets: 'dev-secret',
-            },
-        ),
+        cookie: cookieConfig,
         query: t.Object({
             client_id: t.String(),
             scope: t.String(),

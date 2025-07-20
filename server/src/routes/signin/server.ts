@@ -3,6 +3,7 @@ import Elysia, { redirect, t, NotFoundError } from 'elysia';
 import page from './page';
 import { getUserByUsername } from '$db/users';
 import { exportSession, Session } from '$lib/session';
+import { cookieConfig } from '$lib/cookie';
 
 export const signin = new Elysia()
     .use(html())
@@ -35,22 +36,7 @@ export const signin = new Elysia()
             return redirect('/apps');
         },
         {
-            cookie: t.Optional(
-                t.Cookie(
-                    {
-                        sess: t.Optional(t.String()),
-                    },
-                    {
-                        httpOnly: true,
-                        secure: Bun.env.cookie__secure == 'true',
-                        secrets:
-                            Bun.env.NODE_ENV === 'PRODUCTION'
-                                ? Bun.env.COOKIE_SECRET
-                                : 'dev-secret',
-                        sameSite: 'strict',
-                    },
-                ),
-            ),
+            cookie: cookieConfig,
         },
     )
     .post(
@@ -111,23 +97,7 @@ export const signin = new Elysia()
             });
         },
         {
-            cookie: t.Optional(
-                t.Cookie(
-                    {
-                        sess: t.Optional(t.String()),
-                        oauth: t.Optional(t.String()),
-                    },
-                    {
-                        httpOnly: true,
-                        secure: Bun.env.cookie__secure == 'true',
-                        secrets:
-                            Bun.env.NODE_ENV === 'PRODUCTION'
-                                ? Bun.env.COOKIE_SECRET
-                                : 'dev-secret',
-                        sameSite: 'strict',
-                    },
-                ),
-            ),
+            cookie: cookieConfig,
             body: t.Object({
                 username: t.String(),
                 password: t.String(),
