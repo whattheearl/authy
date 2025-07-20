@@ -2,7 +2,7 @@ import { Html } from '@elysiajs/html';
 // @ts-ignore
 import styles from './apps.css' with { type: 'text' };
 
-export const AppsPage = function(props: { apps: any[] }) {
+export const AppsPage = function (props: { apps: any[] }) {
     console.log(props);
     return (
         <html>
@@ -24,4 +24,4 @@ export const AppsPage = function(props: { apps: any[] }) {
             </body>
         </html>
     );
-}
+};

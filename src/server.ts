@@ -14,32 +14,29 @@ import { signinRoute } from './routes/signin';
 import { signoutRoute } from './routes/signout';
 import { tokenRoute } from './routes/token';
 
-dropCodeTable();
-createCodeTable();
-if (Bun.env.NODE_ENV !== 'PRODUCTION') {
+export async function RunDatabaseMigrations() {
+    dropCodeTable();
+    createCodeTable();
     seedClients(clients);
     seedJwks();
     await seedUsersTable();
 }
 
-const app = new Elysia();
-
-app.use(appsRoute)
+export const app = new Elysia()
+    .use(appsRoute)
     .use(authorizationRoute)
     .use(homeRoute)
     .use(jwks)
-    .use(openidRoute);
-if (Bun.env.ENABLE_REGISTRATION?.toLowerCase() === 'true') {
-    app.use(registrationRoute);
-}
-app.use(signinRoute).use(signoutRoute);
-if (Bun.env.NODE_ENV !== 'PRODUCTION') {
-    app.use(swagger());
-}
-app.use(tokenRoute);
+    .use(openidRoute)
+    .use(registrationRoute)
+    .use(signinRoute)
+    .use(signoutRoute)
+    .use(swagger())
+    .use(tokenRoute);
 
-app.listen(3000);
-
-console.log(
-    `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`,
-);
+export function StartServer() {
+    app.listen(3000);
+    console.log(
+        `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`,
+    );
+}

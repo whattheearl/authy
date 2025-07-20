@@ -11,10 +11,10 @@ export interface Client {
 export const clients = [
     {
         id: 1,
-        name: 'test',
-        client_id: 'test',
+        name: 'jeddit',
+        client_id: 'jeddit',
         client_secret: 'test-secret',
-        redirect_uri: 'http://localhost:5173/auth/google/callback',
+        redirect_uri: 'https://jeddit.wte.sh/auth/google/callback',
     },
 ] as Client[];
 

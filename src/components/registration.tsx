@@ -2,7 +2,7 @@ import { Html } from '@elysiajs/html';
 // @ts-ignore
 import styles from './registration.css' with { type: 'text' };
 
-export const RegistrationPage = function() {
+export const RegistrationPage = function () {
     return (
         <html>
             <body>
@@ -19,4 +19,4 @@ export const RegistrationPage = function() {
             </body>
         </html>
     );
-}
+};
