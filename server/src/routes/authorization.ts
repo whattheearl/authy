@@ -4,7 +4,7 @@ import { randomBytes } from '$lib/utils';
 import { AddCodeChallenge, addCodeChallenge } from '$db/code';
 import { cookieConfig } from '$lib/cookie';
 
-export const authorization = new Elysia().get(
+export const authorizationRoute = new Elysia().get(
     '/authorization',
     async ({
         cookie: { oauth, user },

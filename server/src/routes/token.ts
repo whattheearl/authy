@@ -4,7 +4,7 @@ import { getClientByClientId } from '$db/clients';
 import { signJwt } from '$lib/jwt';
 import { getUserById } from '$db/users';
 
-export const token = new Elysia({ prefix: '/token' }).post(
+export const tokenRoute = new Elysia({ prefix: '/token' }).post(
     '/',
     async ({
         query: {

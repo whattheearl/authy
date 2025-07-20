@@ -3,7 +3,7 @@ import Elysia, { status, redirect, t } from 'elysia';
 import { RegistrationPage } from '$components/registration';
 import { getUserByUsername, addUser } from '$db/users';
 
-export const register = new Elysia({ prefix: '/registration' })
+export const registrationRoute = new Elysia({ prefix: '/registration' })
     .use(html())
     .get('/', ({ html }) => html(RegistrationPage()))
     .post(

@@ -1,18 +1,18 @@
 import swagger from '@elysiajs/swagger';
-import { AppsRoute } from './routes/apps';
-import { authorization } from './routes/authorization';
+import { appsRoute } from './routes/apps';
+import { authorizationRoute } from './routes/authorization';
 import { clients, seedClients } from './db/clients';
 import { createCodeTable, dropCodeTable } from './db/code';
 import { Elysia } from 'elysia';
-import { home } from './routes/home';
+import { homeRoute } from './routes/home';
 import { jwks } from './routes/jwks';
-import { openidConfiguration } from './routes/openid-configuration';
-import { register } from './routes/registration';
+import { openidRoute } from './routes/openid-configuration';
+import { registrationRoute } from './routes/registration';
 import { seedJwks } from './db/jwks';
 import { seedUsersTable } from './db/users';
-import { signin } from './routes/signin';
-import { signout } from './routes/signout';
-import { token } from './routes/token';
+import { signinRoute } from './routes/signin';
+import { signoutRoute } from './routes/signout';
+import { tokenRoute } from './routes/token';
 
 dropCodeTable();
 createCodeTable();
@@ -24,20 +24,19 @@ if (Bun.env.NODE_ENV !== 'PRODUCTION') {
 
 const app = new Elysia();
 
-app.use(AppsRoute) //                    /apps
-    .use(authorization) //          /authorization
-    .use(home) //                   /
-    .use(jwks) //                   /jwks
-    .use(openidConfiguration); //   /.well-known/openid-configuration
+app.use(appsRoute)
+    .use(authorizationRoute)
+    .use(homeRoute)
+    .use(jwks)
+    .use(openidRoute);
 if (Bun.env.ENABLE_REGISTRATION?.toLowerCase() === 'true') {
-    app.use(register); //           /register
+    app.use(registrationRoute);
 }
-app.use(signin) //                  /signin
-    .use(signout); //               /signout
+app.use(signinRoute).use(signoutRoute);
 if (Bun.env.NODE_ENV !== 'PRODUCTION') {
-    app.use(swagger()); //          /swagger
+    app.use(swagger());
 }
-app.use(token); //                  /token
+app.use(tokenRoute);
 
 app.listen(3000);
 

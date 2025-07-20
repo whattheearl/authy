@@ -4,7 +4,7 @@ import { getUserByUsername } from '$db/users';
 import { cookieConfig } from '$lib/cookie';
 import { SigninPage } from '$components/signin';
 
-export const signin = new Elysia()
+export const signinRoute = new Elysia()
     .use(html())
     .get(
         '/signin',

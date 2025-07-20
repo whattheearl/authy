@@ -2,7 +2,7 @@ import Elysia from 'elysia';
 
 const baseUri = 'http://localhost:3000';
 
-export const openidConfiguration = new Elysia().get(
+export const openidRoute = new Elysia().get(
     '/.well-known/openid-configuration',
     () => {
         return {
