@@ -1,13 +1,13 @@
 import { Html } from '@elysiajs/html';
 // @ts-ignore
-import styles from './styles.css' with { type: 'text' };
+import styles from './signin.css' with { type: 'text' };
 
 function RegistrationLink({ enableRegistration }: { enableRegistration: boolean }) {
     if (enableRegistration) return <a href="/register">Register here</a>
     return null;
 }
 
-export default function({ enableRegistration }: { enableRegistration: boolean }) {
+export const SigninPage = function({ enableRegistration }: { enableRegistration: boolean }) {
     return (
         <html>
             <body>

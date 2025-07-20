@@ -1,8 +1,8 @@
 import { Html } from '@elysiajs/html';
 // @ts-ignore
-import styles from './styles.css' with { type: 'text' };
+import styles from './registration.css' with { type: 'text' };
 
-export default function () {
+export const RegistrationPage = function() {
     return (
         <html>
             <body>

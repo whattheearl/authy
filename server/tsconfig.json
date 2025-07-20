@@ -2,7 +2,8 @@
     "compilerOptions": {
         "paths": {
             "$db/*": ["./src/db/*"],
-            "$lib/*": ["./src/lib/*"]
+            "$lib/*": ["./src/lib/*"],
+            "$components/*": ["./src/components/*"],
         },
         "jsx": "react",
         "jsxFactory": "Html.createElement",

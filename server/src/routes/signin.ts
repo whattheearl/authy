@@ -1,8 +1,8 @@
 import html from '@elysiajs/html';
-import Elysia, { redirect, t, NotFoundError } from 'elysia';
-import page from './page';
+import Elysia, { status, redirect, t } from 'elysia';
 import { getUserByUsername } from '$db/users';
 import { cookieConfig } from '$lib/cookie';
+import { SigninPage } from '$components/signin';
 
 export const signin = new Elysia()
     .use(html())
@@ -13,7 +13,7 @@ export const signin = new Elysia()
                 Bun.env.ENABLE_REGISTRATION?.toLowerCase() === 'true';
             if (!user.value) {
                 return html(
-                    page({
+                    SigninPage({
                         enableRegistration,
                     }),
                 );
@@ -32,7 +32,7 @@ export const signin = new Elysia()
             console.log('retrieve user', { user });
             if (!exists) {
                 console.log('user not found');
-                return new NotFoundError('User not found.');
+                return status(404, 'User not found.');
             }
 
             const isMatch = await Bun.password.verify(
@@ -42,7 +42,7 @@ export const signin = new Elysia()
             console.log('credentials are matched');
             if (!isMatch) {
                 console.log('password does not match');
-                return new NotFoundError('User not found.');
+                return status(404, 'User not found.');
             }
 
             user.value = {

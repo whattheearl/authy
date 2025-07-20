@@ -1,11 +1,11 @@
 import html from '@elysiajs/html';
 import Elysia, { status, redirect, t } from 'elysia';
-import page from './page';
+import { RegistrationPage } from '$components/registration';
 import { getUserByUsername, addUser } from '$db/users';
 
-export const register = new Elysia({ prefix: '/register' })
+export const register = new Elysia({ prefix: '/registration' })
     .use(html())
-    .get('/', ({ html }) => html(page()))
+    .get('/', ({ html }) => html(RegistrationPage()))
     .post(
         '/',
         async ({ body: { username, password } }) => {
@@ -15,7 +15,6 @@ export const register = new Elysia({ prefix: '/register' })
             }
 
             const hashedPassword = await Bun.password.hash(password);
-
             await addUser({ username, password: hashedPassword });
 
             return redirect('/');

@@ -1,5 +1,5 @@
 import swagger from '@elysiajs/swagger';
-import { apps } from './routes/apps/server';
+import { AppsRoute } from './routes/apps';
 import { authorization } from './routes/authorization';
 import { clients, seedClients } from './db/clients';
 import { createCodeTable, dropCodeTable } from './db/code';
@@ -7,10 +7,10 @@ import { Elysia } from 'elysia';
 import { home } from './routes/home';
 import { jwks } from './routes/jwks';
 import { openidConfiguration } from './routes/openid-configuration';
-import { register } from './routes/register/server';
+import { register } from './routes/registration';
 import { seedJwks } from './db/jwks';
 import { seedUsersTable } from './db/users';
-import { signin } from './routes/signin/server';
+import { signin } from './routes/signin';
 import { signout } from './routes/signout';
 import { token } from './routes/token';
 
@@ -24,7 +24,7 @@ if (Bun.env.NODE_ENV !== 'PRODUCTION') {
 
 const app = new Elysia();
 
-app.use(apps) //                    /apps
+app.use(AppsRoute) //                    /apps
     .use(authorization) //          /authorization
     .use(home) //                   /
     .use(jwks) //                   /jwks

@@ -1,9 +1,9 @@
 import html from '@elysiajs/html';
 import Elysia, { status } from 'elysia';
-import page from './page';
+import { AppsPage } from '$components/apps';
 import { cookieConfig } from '$lib/cookie';
 
-export const apps = new Elysia({ prefix: '/apps' }).use(html()).get(
+export const AppsRoute = new Elysia({ prefix: '/apps' }).use(html()).get(
     '/',
     ({ html, cookie: { user } }) => {
         if (!user.value) {
@@ -11,7 +11,7 @@ export const apps = new Elysia({ prefix: '/apps' }).use(html()).get(
         }
 
         return html(
-            page({
+            AppsPage({
                 apps: [{ name: 'some app', href: 'http://localhost:5173/' }],
             }),
         );
