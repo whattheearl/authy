@@ -11,7 +11,7 @@ export const SigninPage = function({ enableRegistration }: { enableRegistration:
     return (
         <html>
             <body>
-                <form method="POST" action="/">
+                <form method="POST" action="/signin">
                     <h1>Sign in to Authy</h1>
                     <h2>Please sign in to continue</h2>
                     <label for="username">username</label>

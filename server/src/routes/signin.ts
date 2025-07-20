@@ -25,11 +25,11 @@ export const signinRoute = new Elysia()
         },
     )
     .post(
-        '/',
+        '/signin',
         async ({ body: { username, password }, cookie: { user, oauth } }) => {
             console.log('signin', { username, password });
             const exists = getUserByUsername(username);
-            console.log('retrieve user', { user });
+            console.log('retrieve user', exists);
             if (!exists) {
                 console.log('user not found');
                 return status(404, 'User not found.');
