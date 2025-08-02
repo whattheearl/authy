@@ -1,6 +1,6 @@
 import Elysia from 'elysia';
-
-const baseUri = 'http://localhost:3000';
+const PORT = process.env.PORT ?? 3000;
+const baseUri = `http://localhost:${PORT}/oauth`;
 
 export const openidRoute = new Elysia().get(
     '/.well-known/openid-configuration',

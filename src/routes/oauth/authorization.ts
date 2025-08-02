@@ -5,7 +5,7 @@ import { AddCodeChallenge, addCodeChallenge } from '$db/code';
 import { cookieConfig } from '$lib/cookie';
 
 export const authorizationRoute = new Elysia().get(
-    '/authorization',
+    '/oauth/authorization',
     async ({
         cookie: { oauth, user },
         query: {
@@ -48,11 +48,12 @@ export const authorizationRoute = new Elysia().get(
             });
             return new Response('redirecting', {
                 status: 302,
-                headers: { location: `/` },
+                headers: { location: `/signin` },
             });
         }
         const url = new URL(redirect_uri);
         console.log('constructing redirect_uri');
+        // TODO: fix code verifier
         const codeChallenge = {
             user_id: user.value.userId,
             code: randomBytes(32),

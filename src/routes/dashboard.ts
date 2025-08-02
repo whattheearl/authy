@@ -3,7 +3,7 @@ import Elysia, { status } from 'elysia';
 import { AppsPage } from '$components/apps';
 import { cookieConfig } from '$lib/cookie';
 
-export const appsRoute = new Elysia({ prefix: '/apps' }).use(html()).get(
+export const dashboardRoute = new Elysia({ prefix: '/apps' }).use(html()).get(
     '/',
     ({ html, cookie: { user } }) => {
         if (!user.value) {
