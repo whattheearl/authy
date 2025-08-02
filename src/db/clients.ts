@@ -10,18 +10,16 @@ export interface Client {
 
 export const clients = [
     {
-        id: 1,
-        name: 'jeddit',
-        client_id: 'jeddit',
-        client_secret: 'test-secret',
-        redirect_uri: 'https://jeddit.wte.sh/auth/google/callback',
+        id: 0,
+        name: 'test',
+        client_id: 'test_id',
+        client_secret: 'test_secret',
+        redirect_uri: 'http://localhost:5000/oauth/callback',
     },
 ] as Client[];
 
 export function seedClients(clients: Client[]) {
-    dropClientTable();
     createClientTable();
-
     for (const client of clients) {
         addClient(client);
     }
@@ -30,12 +28,12 @@ export function seedClients(clients: Client[]) {
 export function createClientTable() {
     const db = getDb();
     db.run(`CREATE TABLE IF NOT EXISTS clients(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name  VARCHAR(30),
-    client_id text,
-    client_secret text,
-    redirect_uri text
-  )`);
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name  VARCHAR(30),
+        client_id text,
+        client_secret text,
+        redirect_uri text
+    )`);
 }
 
 export function dropClientTable() {
